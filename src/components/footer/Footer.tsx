@@ -9,8 +9,6 @@ export function Footer() {
       </div>
 
       <div className="app-footer__info">
-        <span>Última sincro: Hace 2 min</span>
-        <span className="app-footer__divider">•</span>
         <a href="#terms">Aviso Legal</a>
         <span className="app-footer__divider">•</span>
         <a href="#privacy">Privacidad</a>

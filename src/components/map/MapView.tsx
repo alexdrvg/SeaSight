@@ -211,7 +211,7 @@ export const MapView: React.FC<MapViewProps> = ({ onReportIncident, onSelectBeac
             {/* Marcador GPS del usuario */}
             {userCoords && (
               <Marker position={userCoords}>
-                <Popup>
+                <Popup className="custom-leaflet-popup">
                   <strong>📍 Tu ubicación actual</strong>
                 </Popup>
               </Marker>
@@ -223,10 +223,10 @@ export const MapView: React.FC<MapViewProps> = ({ onReportIncident, onSelectBeac
             <div className="map-info-card">
               <div className="map-info-card__header">
                 <span className="map-info-card__icon">📡</span>
-                <strong>Platges de Catalunya</strong>
+                <strong>Playas de Catalunya</strong>
               </div>
               <p className="map-info-card__description">
-                {playas.length} playas oficiales cargadas en directo.
+                {playas.length} playas oficiales cargadas en directo
               </p>
             </div>
 

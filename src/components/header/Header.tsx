@@ -67,7 +67,7 @@ export const Header: React.FC<HeaderProps> = ({
           <input
             type="search"
             className="header-search-input"
-            placeholder="Buscar playa o municipio (ej. Castelldefels, La Pineda)..."
+            placeholder="Buscar playa o municipio..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             aria-label="Buscar playa o municipio"

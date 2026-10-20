@@ -54,7 +54,7 @@ export const BeachCard: React.FC<BeachCardProps> = ({
     }
   };
 
-  // Manejador del botón de cierre
+  // Maneja del botón de cierre
   const handleCloseClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -93,7 +93,7 @@ export const BeachCard: React.FC<BeachCardProps> = ({
         </button>
       )}
 
-      {/* Cabecera / Identificación */}
+      {/* Identificación de la playa */}
       <header className="beach-popup__header">
         <h3 id="beach-title" className="beach-popup__name">
           {beachName || 'Playa sin nombre'}
@@ -116,7 +116,7 @@ export const BeachCard: React.FC<BeachCardProps> = ({
         </div>
       </div>
 
-      {/* Botón Principal CTA */}
+      {/* Botón Principal que llevará al panel derecha de la información de cada playa */}
       <footer className="beach-popup__footer">
         <button
           type="button"

@@ -4,7 +4,7 @@ export interface MarineData {
   windSpeed: number;
 }
 
-// Coordenadas por defecto (Castelldefels / Platja del Baixador)
+// Coordenadas por defecto 
 export const fetchMarineData = async (
   lat = 41.2645,
   lon = 1.9800

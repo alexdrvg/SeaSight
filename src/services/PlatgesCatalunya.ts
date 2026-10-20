@@ -33,13 +33,16 @@ const parseBandera = (banderaInput?: string): { status: 'green' | 'yellow' | 're
 
 export const fetchAllPlayasCat = async (): Promise<Playa[]> => {
   try {
-    // Pedimos 15.000 filas ordenadas descendentemente por fecha para asegurarnos de traer los registros más recientes de toda la costa
-    const response = await fetch(
-      'https://analisi.transparenciacatalunya.cat/resource/4baz-cjv2.json?$limit=15000&$order=estat_data%20DESC'
-    );
+    // Pedimos la lista completa de playas activas utilizando SoQL
+    const url =
+      'https://analisi.transparenciacatalunya.cat/resource/4baz-cjv2.json?' +
+      '$select=codiplatja,platja,municipi_municipi,coordenada_x,coordenada_y,estat_bandera,max(estat_data)%20as%20ultima_fecha' + '&$group=codiplatja,platja,municipi_municipi,coordenada_x,coordenada_y,estat_bandera' +
+      '&$limit=50000';
+
+    const response = await fetch(url);
 
     if (!response.ok) {
-      throw new Error('Error al conectar con la API de Platges de la Generalitat');
+      throw new Error('Error al conectar con la API de la Generalitat');
     }
 
     const data: ApiItem[] = await response.json();
@@ -53,14 +56,26 @@ export const fetchAllPlayasCat = async (): Promise<Playa[]> => {
     data.forEach((item, index) => {
       if (!item.coordenada_x || !item.coordenada_y) return;
 
-      const lat = parseFloat(item.coordenada_x);
-      const lng = parseFloat(item.coordenada_y);
+      // Convertimos comas a puntos por si la API envía cadenas tipo "41,2645"
+      const rawLat = String(item.coordenada_x).replace(',', '.');
+      const rawLng = String(item.coordenada_y).replace(',', '.');
 
-      // Verificación de coordenadas geográficas en el litoral de Cataluña
-      if (!isNaN(lat) && !isNaN(lng) && lat >= 40.0 && lat <= 42.9 && lng >= 0.0 && lng <= 3.5) {
-        const key = item.codiplatja || item.platja || `platja-${index}`;
+      let lat = parseFloat(rawLat);
+      let lng = parseFloat(rawLng);
 
-        // Como los datos vienen ordenados por fecha más reciente primero, nos quedamos con el primer registro de cada playa
+      // Si vienen invertidas las coordenadas (x/y), las corregimos
+      if (lat < 10 && lng > 30) {
+        const temp = lat;
+        lat = lng;
+        lng = temp;
+      }
+
+      // Validamos que la coordenada caiga dentro del mapa de Cataluña
+      const esCoordenadaValida =
+        !isNaN(lat) && !isNaN(lng) && lat >= 40.0 && lat <= 42.9 && lng >= 0.0 && lng <= 3.5;
+
+      if (esCoordenadaValida) {
+        const key = item.codiplatja || `${item.platja}-${item.municipi_municipi}` || `platja-${index}`;
         if (!mapPlayas.has(key)) {
           const banderaInfo = parseBandera(item.estat_bandera || item.bandera);
 
@@ -78,7 +93,7 @@ export const fetchAllPlayasCat = async (): Promise<Playa[]> => {
     });
 
     const result = Array.from(mapPlayas.values());
-    console.log(`Cargadas ${result.length} playas únicas recientes en Cataluña.`);
+    console.log(`Cargadas ${result.length} playas únicas en total de la costa catalana.`);
     return result;
   } catch (error) {
     console.error('Error cargando playas desde la API de la Generalitat:', error);
