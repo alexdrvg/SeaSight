@@ -1,0 +1,194 @@
+/* ==========================================================================
+   RESET DE LEAFLET POPUP (ELIMINA LA TARJETA TRASERA DE LEAFLET)
+   ========================================================================== */
+
+/* Limpia el contenedor envolvente por defecto de Leaflet */
+.custom-leaflet-popup .leaflet-popup-content-wrapper {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+}
+
+/* Quita márgenes internos forzados por Leaflet */
+.custom-leaflet-popup .leaflet-popup-content {
+  margin: 0 !important;
+  width: auto !important;
+  line-height: normal !important;
+}
+
+/* Estilo del piquito inferior apuntando al marcador */
+.custom-leaflet-popup .leaflet-popup-tip-container {
+  margin-top: -2px;
+}
+
+.custom-leaflet-popup .leaflet-popup-tip {
+  background: #ffffff !important;
+  box-shadow: 0 4px 10px rgba(11, 37, 69, 0.12) !important;
+}
+
+/* Oculta la 'x' por defecto de Leaflet */
+.custom-leaflet-popup .leaflet-popup-close-button {
+  display: none !important;
+}
+
+/* ==========================================================================
+   TARJETA SEA-SIGHT COMPACTA (240px)
+   ========================================================================== */
+
+.beach-popup {
+  position: relative;
+  width: 240px; /* Tamaño compacto perfecto */
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 1rem 0.9rem 0.9rem 0.9rem;
+  box-shadow: 0 10px 25px -3px rgba(11, 37, 69, 0.15);
+  border: 1px solid #e2e8f0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  box-sizing: border-box;
+  color: #0b2545;
+}
+
+/* Cabecera / Título */
+.beach-popup__header {
+  padding-right: 1.2rem;
+  margin-bottom: 0.65rem;
+}
+
+.beach-popup__name {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #0b2545;
+  margin: 0 0 0.25rem 0;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.beach-popup__location {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.beach-popup__pin-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  color: #ec4899;
+  flex-shrink: 0;
+}
+
+.beach-popup__pin-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.beach-popup__municipality {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #64748b;
+}
+
+/* Badge de Bandera */
+.beach-popup__status-wrap {
+  margin-bottom: 0.8rem;
+}
+
+.beach-popup__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.beach-popup__badge--green {
+  background-color: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #047857;
+}
+
+.beach-popup__badge--yellow {
+  background-color: #fefce8;
+  border: 1px solid #fef08a;
+  color: #a16207;
+}
+
+.beach-popup__badge--red {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+.beach-popup__badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.beach-popup__badge-dot--green {
+  background-color: #10b981;
+}
+
+.beach-popup__badge-dot--yellow {
+  background-color: #eab308;
+}
+
+.beach-popup__badge-dot--red {
+  background-color: #ef4444;
+}
+
+.beach-popup__badge-text {
+  line-height: 1;
+}
+
+/* Botón CTA "Explorar playa" */
+.beach-popup__footer {
+  width: 100%;
+}
+
+.beach-popup__cta-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.85rem;
+  background-color: #0284c7;
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
+  box-shadow: 0 3px 10px rgba(2, 132, 199, 0.3);
+  transition: background-color 0.15s ease, transform 0.15s ease;
+  box-sizing: border-box;
+}
+
+.beach-popup__cta-btn:hover {
+  background-color: #0369a1;
+  transform: translateY(-1px);
+}
+
+.beach-popup__cta-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.beach-popup__cta-arrow svg {
+  width: 100%;
+  height: 100%;
+}

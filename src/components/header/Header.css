@@ -1,0 +1,382 @@
+:root {
+  --color-primary-navy: #0b2545;       /* Azul marino profundo */
+  --color-primary-navy-hover: #133a69;
+  --color-accent-ocean: #0096c7;       /* Azul océano / turquesa */
+  --color-accent-ocean-light: #e0f2fe; /* Azul claro / tinte agua */
+  --color-surface-white: #ffffff;
+  --color-surface-soft: #f8fafc;
+  --color-border-subtle: #e2e8f0;
+  --color-border-focus: #38bdf8;
+  --color-text-main: #0f172a;          /* Gris oscuro legible */
+  --color-text-muted: #64748b;         /* Gris sutil */
+  --color-success-sea: #10b981;        /* Estado online/en vivo */
+  --header-height: 72px;
+  --shadow-header: 0 2px 12px rgba(11, 37, 69, 0.08);
+  --shadow-input-focus: 0 0 0 3px rgba(0, 150, 199, 0.18);
+  --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Contenedor principal Header */
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  width: 100%;
+  height: var(--header-height);
+  padding: 0 2rem;
+  background-color: var(--color-surface-white);
+  border-bottom: 1px solid var(--color-border-subtle);
+  box-shadow: var(--shadow-header);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* 1. Brand & Logo */
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.header-logo-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  outline: none;
+}
+
+.header-logo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--color-primary-navy) 0%, var(--color-accent-ocean) 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 150, 199, 0.28);
+  transition: var(--transition-smooth);
+}
+
+.header-logo-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.header-logo-icon {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 150, 199, 0.38);
+}
+
+.header-brand-name {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--color-primary-navy);
+}
+
+/* 2. Buscador */
+.header-search {
+  flex: 1;
+  max-width: 440px;
+  position: relative;
+}
+
+.header-search-form {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.header-search-icon {
+  position: absolute;
+  left: 0.9rem;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.header-search-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.header-search-input {
+  width: 100%;
+  height: 42px;
+  padding: 0 2.2rem 0 2.6rem;
+  font-size: 0.9rem;
+  color: var(--color-text-main);
+  background-color: var(--color-surface-soft);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 24px;
+  outline: none;
+  transition: var(--transition-smooth);
+}
+
+.header-search-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.header-search-input:focus {
+  background-color: var(--color-surface-white);
+  border-color: var(--color-accent-ocean);
+  box-shadow: var(--shadow-input-focus);
+}
+
+.header-search-clear {
+  position: absolute;
+  right: 0.8rem;
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.2rem;
+}
+
+.header-search-clear:hover {
+  color: var(--color-text-main);
+}
+
+/* 3. Navegación Principal */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.header-nav-list {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 0.4rem;
+}
+
+.header-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  text-decoration: none;
+}
+
+.header-nav-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.header-nav-link:hover {
+  color: var(--color-primary-navy);
+  background-color: var(--color-surface-soft);
+}
+
+.header-nav-link--active {
+  color: var(--color-accent-ocean);
+  background-color: var(--color-accent-ocean-light);
+  font-weight: 600;
+}
+
+.header-action-group {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+/* Botón Iniciar Sesión */
+.header-btn-login {
+  padding: 0.55rem 1.35rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-surface-white);
+  background-color: var(--color-primary-navy);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.header-btn-login:hover {
+  background-color: var(--color-primary-navy-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(11, 37, 69, 0.18);
+}
+
+/* Perfil de Usuario */
+.header-user-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 20px;
+  background-color: var(--color-surface-soft);
+}
+
+.header-user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.header-user-initials {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--color-accent-ocean);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.header-user-name {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text-main);
+  margin-right: 0.25rem;
+}
+
+/* 4. Mobile Toggle & Responsive */
+.header-mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.header-hamburger {
+  position: relative;
+  display: block;
+  width: 22px;
+  height: 2px;
+  background-color: var(--color-primary-navy);
+  transition: var(--transition-smooth);
+}
+
+.header-hamburger::before,
+.header-hamburger::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-primary-navy);
+  transition: var(--transition-smooth);
+}
+
+.header-hamburger::before { top: -6px; }
+.header-hamburger::after { bottom: -6px; }
+
+.header-hamburger--active {
+  background-color: transparent;
+}
+.header-hamburger--active::before {
+  transform: translateY(6px) rotate(45deg);
+}
+.header-hamburger--active::after {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+@media (max-width: 992px) {
+  .header-badge-live {
+    display: none;
+  }
+  .header-search {
+    max-width: 280px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    padding: 0 1rem;
+    height: 64px;
+    gap: 0.75rem;
+  }
+
+  .header-search {
+    flex: 1;
+    max-width: none;
+  }
+
+  .header-search-input {
+    height: 38px;
+    font-size: 0.85rem;
+  }
+
+  .header-mobile-toggle {
+    display: block;
+  }
+
+  .header-nav {
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    position: absolute;
+    top: 64px;
+    left: 0;
+    width: 100%;
+    background-color: var(--color-surface-white);
+    padding: 1.25rem 1rem 1.75rem 1rem;
+    border-bottom: 1px solid var(--color-border-subtle);
+    box-shadow: 0 10px 20px rgba(11, 37, 69, 0.1);
+    gap: 1.25rem;
+    box-sizing: border-box;
+  }
+
+  .header-nav--open {
+    display: flex;
+    animation: slideDown 0.25s ease-out forwards;
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .header-nav-list {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .header-nav-link {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  .header-action-group {
+    width: 100%;
+  }
+
+  .header-btn-login {
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+  }
+}

@@ -1,0 +1,7 @@
+name = "seasight"
+compatibility_date = "2026-01-01"
+
+[[d1_databases]]
+binding = "seasight_db"
+database_name = "seasight-db"
+database_id = "d395bb4c-bf6e-4b13-8bd4-d64e179b2cd2"
