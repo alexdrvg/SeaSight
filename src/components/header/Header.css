@@ -1,21 +1,3 @@
-:root {
-  --color-primary-navy: #0b2545;       /* Azul marino profundo */
-  --color-primary-navy-hover: #133a69;
-  --color-accent-ocean: #0096c7;       /* Azul océano / turquesa */
-  --color-accent-ocean-light: #e0f2fe; /* Azul claro / tinte agua */
-  --color-surface-white: #ffffff;
-  --color-surface-soft: #f8fafc;
-  --color-border-subtle: #e2e8f0;
-  --color-border-focus: #38bdf8;
-  --color-text-main: #0f172a;          /* Gris oscuro legible */
-  --color-text-muted: #64748b;         /* Gris sutil */
-  --color-success-sea: #10b981;        /* Estado online/en vivo */
-  --header-height: 72px;
-  --shadow-header: 0 2px 12px rgba(11, 37, 69, 0.08);
-  --shadow-input-focus: 0 0 0 3px rgba(0, 150, 199, 0.18);
-  --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
 /* Contenedor principal Header */
 .header-container {
   display: flex;

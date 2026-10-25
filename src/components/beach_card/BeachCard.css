@@ -28,6 +28,17 @@
   display: none !important;
 }
 
+/* Ajuste cuando el popup custom contiene directamente un tag strong */
+.custom-leaflet-popup .leaflet-popup-content strong {
+  display: block;
+  background: #ffffff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+  color: #0b2545;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
 /* Tarjeta de la playa (240px) */
 
 .beach-popup {

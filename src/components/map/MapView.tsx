@@ -212,7 +212,7 @@ export const MapView: React.FC<MapViewProps> = ({ onReportIncident, onSelectBeac
             {userCoords && (
               <Marker position={userCoords}>
                 <Popup className="custom-leaflet-popup">
-                  <strong>📍 Tu ubicación actual</strong>
+                  <strong>📍Tu ubicación actual</strong>
                 </Popup>
               </Marker>
             )}

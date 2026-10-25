@@ -1,0 +1,422 @@
+/* Overlay con fondo con desenfoque de cristal */
+.seasight-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background-color: rgba(11, 37, 69, 0.42);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: seasightFadeIn 0.25s ease-out;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+@keyframes seasightFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Contenedor del login */
+.seasight-modal-card {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: 0 20px 40px rgba(11, 37, 69, 0.15);
+  padding: 2.25rem 2rem 1.85rem 2rem;
+  box-sizing: border-box;
+  color: var(--color-text-main);
+  animation: seasightScaleIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes seasightScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Botón de cierre */
+.seasight-modal-close {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0;
+  transition: var(--transition-smooth);
+}
+
+.seasight-modal-close svg {
+  width: 18px;
+  height: 18px;
+}
+
+.seasight-modal-close:hover {
+  background-color: var(--color-accent-ocean-light);
+  color: var(--color-primary-navy);
+  transform: scale(1.08);
+}
+
+/* Header con el logo */
+.seasight-modal-header {
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+.seasight-modal-logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.85rem;
+}
+
+.seasight-modal-logo-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--color-primary-navy) 0%, var(--color-accent-ocean) 100%);
+  color: var(--color-surface-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(0, 150, 199, 0.28);
+}
+
+.seasight-modal-logo-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.seasight-modal-title {
+  margin: 0 0 0.45rem 0;
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--color-primary-navy);
+}
+
+.seasight-modal-subtitle {
+  margin: 0 auto;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+  max-width: 320px;
+}
+
+/* Acceso rápido de Google */
+.seasight-modal-social {
+  margin-bottom: 1.35rem;
+}
+
+.seasight-btn-google {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-surface-white);
+  color: var(--color-primary-navy);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 10px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  box-shadow: 0 2px 6px rgba(11, 37, 69, 0.04);
+  box-sizing: border-box;
+}
+
+.seasight-btn-google:hover {
+  background-color: var(--color-surface-soft);
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(11, 37, 69, 0.08);
+}
+
+.seasight-google-icon {
+  flex-shrink: 0;
+}
+
+/* Divisor */
+.seasight-modal-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1.4rem;
+}
+
+.seasight-divider-line {
+  flex: 1;
+  height: 1px;
+  background-color: var(--color-border-subtle);
+}
+
+.seasight-divider-text {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+}
+
+/* Formulario */
+.seasight-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.seasight-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  text-align: left;
+}
+
+.seasight-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.seasight-form-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-primary-navy);
+}
+
+.seasight-forgot-link {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-accent-ocean);
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+
+.seasight-forgot-link:hover {
+  color: var(--color-primary-navy-hover);
+  text-decoration: underline;
+}
+
+.seasight-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.seasight-input-icon {
+  position: absolute;
+  left: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-muted);
+  pointer-events: none;
+  transition: var(--transition-smooth);
+}
+
+.seasight-input-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.seasight-input {
+  width: 100%;
+  padding: 12px 16px 12px 42px;
+  font-size: 0.9rem;
+  color: var(--color-text-main);
+  background-color: var(--color-surface-soft);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 10px;
+  outline: none;
+  transition: var(--transition-smooth);
+  box-sizing: border-box;
+}
+
+.seasight-input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.7;
+}
+
+.seasight-input:focus {
+  background-color: var(--color-surface-white);
+  border-color: var(--color-border-focus);
+  box-shadow: var(--shadow-input-focus);
+}
+
+.seasight-input:focus + .seasight-input-icon,
+.seasight-input-wrapper:focus-within .seasight-input-icon {
+  color: var(--color-accent-ocean);
+}
+
+.seasight-input--password {
+  padding-right: 44px;
+}
+
+.seasight-password-toggle {
+  position: absolute;
+  right: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 0;
+  transition: var(--transition-smooth);
+}
+
+.seasight-password-toggle svg {
+  width: 17px;
+  height: 17px;
+}
+
+.seasight-password-toggle:hover {
+  color: var(--color-primary-navy);
+  background-color: var(--color-accent-ocean-light);
+}
+
+/* Botones */
+.seasight-btn-primary {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 20px;
+  margin-top: 0.35rem;
+  background-color: var(--color-primary-navy);
+  color: var(--color-surface-white);
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(11, 37, 69, 0.2);
+  transition: var(--transition-smooth);
+  box-sizing: border-box;
+}
+
+.seasight-btn-primary:hover:not(:disabled) {
+  background-color: var(--color-primary-navy-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(11, 37, 69, 0.3);
+}
+
+.seasight-btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 3px 10px rgba(11, 37, 69, 0.25);
+}
+
+.seasight-btn-primary:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+.seasight-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: seasightSpin 0.7s linear infinite;
+}
+
+@keyframes seasightSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Footer */
+.seasight-modal-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.seasight-switch-mode-text {
+  margin: 0;
+  font-size: 0.83rem;
+  color: var(--color-text-muted);
+}
+
+.seasight-switch-mode-btn {
+  background: transparent;
+  border: none;
+  padding: 0 0.25rem;
+  font-size: 0.83rem;
+  font-weight: 700;
+  color: var(--color-accent-ocean);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  text-decoration: none;
+}
+
+.seasight-switch-mode-btn:hover {
+  color: var(--color-primary-navy-hover);
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .seasight-modal-overlay {
+    padding: 1rem;
+  }
+
+  .seasight-modal-card {
+    width: 90%;
+    max-width: 90%;
+    padding: 1.85rem 1.25rem 1.5rem 1.25rem;
+    border-radius: 14px;
+  }
+
+  .seasight-modal-title {
+    font-size: 1.35rem;
+  }
+
+  .seasight-modal-subtitle {
+    font-size: 0.82rem;
+  }
+
+  .seasight-input {
+    padding: 11px 14px 11px 38px;
+    font-size: 0.875rem;
+  }
+
+  .seasight-input-icon {
+    left: 0.85rem;
+  }
+
+  .seasight-btn-primary {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+  }
+}
