@@ -6,13 +6,10 @@ import 'leaflet/dist/leaflet.css';
 import { BeachCard } from '../beach_card/BeachCard';
 import '../beach_card/BeachCard.css';
 
-// APIS
-import { fetchMarineData } from '../../services/OpenMeteoMarineAPI';
-import type { MarineData } from '../../services/OpenMeteoMarineAPI';
-import { fetchAllPlayasCat } from '../../services/PlatgesCatalunya';
 import type { Playa } from '../../services/PlatgesCatalunya';
+import { BeachData } from '../../hooks/BeachData';
 
-// Fix de iconos por defecto de Leaflet TEMPORAL
+// Leaflet default icons fix
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
@@ -32,19 +29,17 @@ export interface MapViewProps {
 const CENTER_LAT = 41.2645;
 const CENTER_LNG = 1.9800;
 
-// Corrección de redimensionado inicial de Leaflet
+// Subcomponente de ayuda para recalcular tamaño de canvas
 const FixMapResize = () => {
   const map = useMap();
   useEffect(() => {
-    const timer = setTimeout(() => {
-      map.invalidateSize();
-    }, 300);
+    const timer = setTimeout(() => map.invalidateSize(), 300);
     return () => clearTimeout(timer);
   }, [map]);
   return null;
 };
 
-// Vuela a la posición GPS sl pulsar el botón
+// Subcomponente de ayuda para animar la cámara al GPS
 const LocateUserHandler = ({ targetCoords }: { targetCoords: [number, number] | null }) => {
   const map = useMap();
   useEffect(() => {
@@ -55,30 +50,12 @@ const LocateUserHandler = ({ targetCoords }: { targetCoords: [number, number] | 
   return null;
 };
 
-// Icono TEMPORAL para cada BeachCard según la bandera
 const createBeachIcon = (status: 'green' | 'yellow' | 'red') => {
-  const colorMap = {
-    green: '#10b981',
-    yellow: '#eab308',
-    red: '#ef4444',
-  };
-
+  const colorMap = { green: '#10b981', yellow: '#eab308', red: '#ef4444' };
   return L.divIcon({
     className: 'custom-beach-pin',
     html: `
-      <div style="
-        background-color: white;
-        border: 2px solid ${colorMap[status]};
-        border-radius: 50%;
-        width: 28px;
-        height: 28px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-        font-size: 14px;
-        cursor: pointer;
-      ">
+      <div style="background-color: white; border: 2px solid ${colorMap[status]}; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); font-size: 14px; cursor: pointer;">
         🏖️
       </div>
     `,
@@ -88,40 +65,11 @@ const createBeachIcon = (status: 'green' | 'yellow' | 'red') => {
 };
 
 export const MapView: React.FC<MapViewProps> = ({ onReportIncident, onSelectBeach }) => {
-  const [playas, setPlayas] = useState<Playa[]>([]);
-  const [loadingPlayas, setLoadingPlayas] = useState<boolean>(true);
-  const [marineData, setMarineData] = useState<MarineData | null>(null);
+  // Hook personalizado que maneja las cargas de API externas
+  const { playas, loadingPlayas } = BeachData(CENTER_LAT, CENTER_LNG);
+  
   const [userCoords, setUserCoords] = useState<[number, number] | null>(null);
   const [locating, setLocating] = useState<boolean>(false);
-
-  // Función para manejar la selección de la playa y abrir el panel
-  const handleOpenPanel = (platja: Playa) => {
-    if (onSelectBeach) {
-      onSelectBeach(platja);
-    }
-  };
-
-  // 1. CARGA AUTOMÁTICA DE PLAYAS ÚNICAS DESDE LA API
-  useEffect(() => {
-    const cargarPlayas = async () => {
-      setLoadingPlayas(true);
-      const dataApi = await fetchAllPlayasCat();
-      setPlayas(dataApi);
-      setLoadingPlayas(false);
-    };
-
-    cargarPlayas();
-  }, []);
-
-  // Carga los datos marinos en tiempo real
-  useEffect(() => {
-    const loadApiData = async () => {
-      const data = await fetchMarineData(CENTER_LAT, CENTER_LNG);
-      setMarineData(data);
-    };
-
-    loadApiData();
-  }, []);
 
   const handleGeolocateUser = () => {
     if (!navigator.geolocation) {
@@ -129,11 +77,9 @@ export const MapView: React.FC<MapViewProps> = ({ onReportIncident, onSelectBeac
       return;
     }
     setLocating(true);
-
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const { latitude, longitude } = position.coords;
-        setUserCoords([latitude, longitude]);
+        setUserCoords([position.coords.latitude, position.coords.longitude]);
         setLocating(false);
       },
       (error) => {
@@ -147,7 +93,6 @@ export const MapView: React.FC<MapViewProps> = ({ onReportIncident, onSelectBeac
   return (
     <main className="map-view">
       <div className="map-view__content">
-        {/* BARRA SUPERIOR DE ESTADO */}
         <section className="map-status-bar">
           <div className="map-status-bar__location">
             <span className="map-status-bar__region">
@@ -158,14 +103,11 @@ export const MapView: React.FC<MapViewProps> = ({ onReportIncident, onSelectBeac
             </span>
             <span className="map-status-bar__separator">›</span>
             <span className="map-status-bar__beach">
-              {loadingPlayas ? 'Cargando playas de Catalunya...' : `${playas.length} playas geolocalizadas`}
+              {loadingPlayas ? 'Cargando playas...' : `${playas.length} playas geolocalizadas`}
             </span>
           </div>
-
-
         </section>
 
-        {/* CANVAS MAPA LEAFLET */}
         <div className="map-canvas">
           <MapContainer
             center={[CENTER_LAT, CENTER_LNG]}
@@ -176,49 +118,36 @@ export const MapView: React.FC<MapViewProps> = ({ onReportIncident, onSelectBeac
             <FixMapResize />
             <LocateUserHandler targetCoords={userCoords} />
 
-            {/* Capa base: OpenStreetMap */}
-            <TileLayer
-              attribution='&copy; OpenStreetMap'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
+            <TileLayer attribution='&copy; OpenStreetMap' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <TileLayer attribution='&copy; OpenSeaMap' url="https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png" />
 
-            {/* Capa náutica: OpenSeaMap */}
-            <TileLayer
-              attribution='&copy; OpenSeaMap'
-              url="https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png"
-            />
-
-            {/* MARCADORES PLAYAS DE LA API GENERALITAT */}
             {playas.map((platja) => (
               <Marker
                 key={platja.id}
                 position={[platja.latitud, platja.longitud]}
                 icon={createBeachIcon(platja.banderaStatus)}
               >
-                {/* Usamos 'custom-leaflet-popup' para NO duplicar la clase de tu tarjeta */}
                 <Popup className="custom-leaflet-popup">
                   <BeachCard
                     beachName={platja.nom}
                     municipality={platja.municipi}
                     flagStatus={platja.banderaStatus}
                     flagLabel={platja.banderaLabel}
-                    onViewDetails={() => handleOpenPanel(platja)}
+                    onViewDetails={() => onSelectBeach && onSelectBeach(platja)}
                   />
                 </Popup>
               </Marker>
             ))}
 
-            {/* Marcador GPS del usuario */}
             {userCoords && (
               <Marker position={userCoords}>
                 <Popup className="custom-leaflet-popup">
-                  <strong>📍Tu ubicación actual</strong>
+                  <strong>📍 Tu ubicación actual</strong>
                 </Popup>
               </Marker>
             )}
           </MapContainer>
 
-          {/* BOTONES FLOTANTES */}
           <div className="map-canvas__footer">
             <div className="map-info-card">
               <div className="map-info-card__header">

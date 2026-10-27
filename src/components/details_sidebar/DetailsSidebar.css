@@ -1,0 +1,706 @@
+.seasight-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(11, 37, 69, 0.55); 
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-end;
+  animation: seasightFadeIn 0.2s ease-out;
+  /* Fuerza la aceleración por hardware */
+  will-change: opacity;
+}
+
+/* Contenedor prinicpal de la info de la playa + biodiversidad */
+.seasight-drawer {
+  position: relative;
+  width: 100%;
+  max-width: 490px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-surface-white);
+  box-shadow: -12px 0 36px rgba(11, 37, 69, 0.25);
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--color-text-main);
+  overflow: hidden;
+  animation: seasightSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Indicar a la GPU que prepare la propiedad transform */
+  will-change: transform;
+  transform: translateZ(0); /* Truco para forzar capa propia en la GPU */
+}
+
+@keyframes seasightFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes seasightSlideIn {
+  from { transform: translate3d(100%, 0, 0); } /* Usar 3D para renderizado nativo */
+  to { transform: translate3d(0, 0, 0); }
+}
+/* Cabecera fija */
+.seasight-drawer__header {
+  padding: 1.5rem 1.6rem 0.6rem 1.6rem;
+  background-color: var(--color-surface-white);
+  border-bottom: 1px solid var(--color-border-subtle);
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.seasight-drawer__status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+}
+
+.seasight-drawer__status-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Badge de Bandera */
+.seasight-drawer__flag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  padding: 0.28rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.seasight-drawer__flag-badge--green {
+  background-color: var(--color-notice-green-bg);
+  color: #047857;
+  border: 1px solid var(--color-notice-green-border);
+}
+
+.seasight-drawer__flag-badge--yellow {
+  background-color: var(--color-badge-vulnerable-bg);
+  color: var(--color-badge-vulnerable-text);
+  border: 1px solid #fef08a;
+}
+
+.seasight-drawer__flag-badge--red {
+  background-color: var(--color-badge-danger-bg);
+  color: var(--color-badge-danger-text);
+  border: 1px solid #fecaca;
+}
+
+.seasight-drawer__icon-check {
+  width: 13px;
+  height: 13px;
+}
+
+.seasight-drawer__time-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.seasight-drawer__icon-clock {
+  width: 14px;
+  height: 14px;
+  color: var(--color-text-muted);
+}
+
+/* Botones de Acción de Cabecera (Compartir, Guardar, Cerrar) */
+.seasight-drawer__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.seasight-drawer__action-btn,
+.seasight-drawer__close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0;
+  transition: var(--transition-smooth);
+}
+
+.seasight-drawer__action-btn svg,
+.seasight-drawer__close-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.seasight-drawer__action-btn:hover,
+.seasight-drawer__close-btn:hover {
+  background-color: var(--color-surface-soft);
+  color: var(--color-primary-navy);
+  transform: scale(1.06);
+}
+
+.seasight-drawer__action-btn--active {
+  color: var(--color-accent-ocean);
+}
+
+/* Título de la Playa y Ubicación */
+.seasight-drawer__title {
+  margin: 0 0 0.35rem 0;
+  font-size: 1.62rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--color-primary-navy);
+  line-height: 1.2;
+}
+
+.seasight-drawer__location {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.83rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin-bottom: 1.25rem;
+}
+
+.seasight-drawer__pin-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   3. Navegación por Tabs
+   ========================================================================== */
+.seasight-drawer__tabs {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 0.25rem;
+  border-bottom: 2px solid transparent;
+}
+
+.seasight-drawer__tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.65rem 0.15rem 0.85rem 0.15rem;
+  background: transparent;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  white-space: nowrap;
+}
+
+.seasight-drawer__tab-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.seasight-drawer__tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: var(--color-accent-ocean-light);
+  color: var(--color-accent-ocean);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.seasight-drawer__tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: var(--color-badge-danger-bg);
+  color: var(--color-badge-danger-text);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.seasight-drawer__tab:hover {
+  color: var(--color-primary-navy);
+}
+
+.seasight-drawer__tab--active {
+  color: var(--color-accent-ocean);
+  font-weight: 700;
+}
+
+.seasight-drawer__tab--active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2.5px;
+  background-color: var(--color-accent-ocean);
+  border-radius: 2px 2px 0 0;
+}
+
+/* ==========================================================================
+   4. Cuerpo Scrolleable
+   ========================================================================== */
+.seasight-drawer__body {
+  flex: 1;
+  padding: 1.4rem 1.6rem;
+  overflow-y: auto;
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 var(--color-surface-soft);
+}
+
+.seasight-drawer__body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.seasight-drawer__body::-webkit-scrollbar-track {
+  background: var(--color-surface-soft);
+}
+
+.seasight-drawer__body::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 4px;
+}
+
+/* Cabecera de Sección (Biodiversidad y Red Natura) */
+.seasight-drawer__section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.1rem;
+  gap: 0.75rem;
+}
+
+.seasight-drawer__section-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.seasight-drawer__icon-eco {
+  width: 16px;
+  height: 16px;
+  color: var(--color-success-sea);
+  flex-shrink: 0;
+}
+
+.seasight-drawer__section-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--color-primary-navy);
+}
+
+.seasight-drawer__tag-natura {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   5. Banner Aviso Ambiental
+   ========================================================================== */
+.seasight-drawer__notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 1rem 1.15rem;
+  background-color: var(--color-notice-green-bg);
+  border: 1px solid var(--color-notice-green-border);
+  border-radius: 14px;
+  margin-bottom: 1.35rem;
+  box-sizing: border-box;
+}
+
+.seasight-drawer__notice-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background-color: var(--color-success-sea);
+  color: var(--color-surface-white);
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.seasight-drawer__notice-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.seasight-drawer__notice-content {
+  flex: 1;
+}
+
+.seasight-drawer__notice-title {
+  margin: 0 0 0.3rem 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #065f46;
+  letter-spacing: -0.01em;
+}
+
+.seasight-drawer__notice-desc {
+  margin: 0;
+  font-size: 0.77rem;
+  line-height: 1.45;
+  color: #047857;
+}
+
+/* ==========================================================================
+   6. Sub-barra de Filtros tipo Píldora
+   ========================================================================== */
+.seasight-drawer__filters {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.4rem;
+  overflow-x: auto;
+  padding-bottom: 0.35rem;
+  scrollbar-width: none;
+}
+
+.seasight-drawer__filters::-webkit-scrollbar {
+  display: none;
+}
+
+.seasight-drawer__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.48rem 0.9rem;
+  background-color: var(--color-surface-white);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-primary-navy);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.seasight-drawer__pill-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.seasight-drawer__pill:hover {
+  background-color: var(--color-surface-soft);
+  border-color: #cbd5e1;
+}
+
+.seasight-drawer__pill--active {
+  background-color: var(--color-primary-navy);
+  border-color: var(--color-primary-navy);
+  color: var(--color-surface-white);
+  box-shadow: 0 2px 8px rgba(11, 37, 69, 0.2);
+}
+
+.seasight-drawer__pill--active:hover {
+  background-color: var(--color-primary-navy-hover);
+  border-color: var(--color-primary-navy-hover);
+}
+
+/* ==========================================================================
+   7. Tarjetas de Especies
+   ========================================================================== */
+.seasight-drawer__species-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.seasight-species-card {
+  background-color: var(--color-surface-white);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(11, 37, 69, 0.04), 0 1px 3px rgba(11, 37, 69, 0.02);
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  transition: var(--transition-smooth);
+  box-sizing: border-box;
+}
+
+.seasight-species-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(11, 37, 69, 0.08), 0 2px 6px rgba(11, 37, 69, 0.04);
+  border-color: #cbd5e1;
+}
+
+.seasight-species-card__body {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+/* Imagen cuadrada a la izquierda con etiqueta */
+.seasight-species-card__media {
+  position: relative;
+  width: 86px;
+  height: 86px;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background-color: #e2e8f0;
+}
+
+.seasight-species-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.seasight-species-card:hover .seasight-species-card__img {
+  transform: scale(1.05);
+}
+
+.seasight-species-card__media-badge {
+  position: absolute;
+  bottom: 0.35rem;
+  left: 0.35rem;
+  background-color: rgba(11, 37, 69, 0.85);
+  backdrop-filter: blur(4px);
+  color: var(--color-surface-white);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+}
+
+/* Contenido a la derecha de la imagen */
+.seasight-species-card__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.seasight-species-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.45rem;
+}
+
+.seasight-species-card__title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-primary-navy);
+  line-height: 1.25;
+}
+
+.seasight-species-card__scientific {
+  display: block;
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--color-text-muted);
+  margin-top: 0.15rem;
+}
+
+/* Badge de Estado / Peligro */
+.seasight-species-card__badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.22rem 0.55rem;
+  border-radius: 9999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.seasight-species-card__badge--vulnerable {
+  background-color: var(--color-badge-vulnerable-bg);
+  color: var(--color-badge-vulnerable-text);
+  border: 1px solid #fef08a;
+}
+
+.seasight-species-card__badge--danger {
+  background-color: var(--color-badge-danger-bg);
+  color: var(--color-badge-danger-text);
+  border: 1px solid #fecaca;
+}
+
+.seasight-species-card__desc {
+  margin: 0;
+  font-size: 0.77rem;
+  line-height: 1.45;
+  color: #475569;
+}
+
+/* Fila inferior de Metadatos */
+.seasight-species-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--color-border-subtle);
+  font-size: 0.74rem;
+  color: var(--color-text-muted);
+}
+
+.seasight-species-card__meta-left {
+  font-weight: 500;
+}
+
+.seasight-species-card__meta-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  color: var(--color-primary-navy-hover);
+}
+
+.seasight-species-card__icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* Estado Vacío */
+.seasight-drawer__empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.seasight-drawer__tab-placeholder {
+  padding: 1rem 0;
+}
+
+.seasight-drawer__placeholder-title {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  color: var(--color-primary-navy);
+}
+
+/* ==========================================================================
+   8. Barra Inferior Fija
+   ========================================================================== */
+.seasight-drawer__footer {
+  padding: 1rem 1.6rem;
+  background-color: var(--color-surface-white);
+  border-top: 1px solid var(--color-border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.seasight-drawer__sensor-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.seasight-drawer__sensor-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #cbd5e1;
+}
+
+.seasight-drawer__sensor-dot--active {
+  background-color: var(--color-success-sea);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+  animation: sensor-pulse 2s infinite;
+}
+
+@keyframes sensor-pulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.seasight-drawer__sensor-text {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-primary-navy);
+}
+
+.seasight-drawer__btn-close-action {
+  padding: 0.45rem 1rem;
+  background-color: var(--color-surface-white);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-primary-navy);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.seasight-drawer__btn-close-action:hover {
+  background-color: var(--color-surface-soft);
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   9. Responsivo (Móvil / Pantallas estrechas)
+   ========================================================================== */
+@media (max-width: 640px) {
+  .seasight-drawer {
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
+  }
+
+  .seasight-drawer__header {
+    padding: 1.25rem 1rem 0.5rem 1rem;
+  }
+
+  .seasight-drawer__title {
+    font-size: 1.35rem;
+  }
+
+  .seasight-drawer__tabs {
+    gap: 1rem;
+  }
+
+  .seasight-drawer__body {
+    padding: 1rem;
+  }
+
+  .seasight-species-card__body {
+    flex-direction: column;
+  }
+
+  .seasight-species-card__media {
+    width: 100%;
+    height: 160px;
+  }
+
+  .seasight-drawer__footer {
+    padding: 0.85rem 1rem;
+  }
+}
