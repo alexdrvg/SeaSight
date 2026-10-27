@@ -45,10 +45,14 @@ export const InteractiveMapPage: React.FC<InteractiveMapPageProps> = ({
       <DetailsSidebar
         isOpen={isSidebarOpen}
         beachName={selectedBeach?.nom || ''}
-        location={`${selectedBeach?.municipi || ''} • Litoral de Catalunya`}
+        location={`${selectedBeach?.municipi?.toUpperCase() || ''} • ${selectedBeach?.costa?.toUpperCase() || ''}`}
         flagStatus={selectedBeach?.banderaStatus || 'green'}
         flagLabel={selectedBeach?.banderaLabel || 'Bandera Verde'}
-        lastUpdated="Última actualización: -"
+        lastUpdated={
+          selectedBeach?.lastUpdated 
+            ? `Última actualización: ${selectedBeach.lastUpdated}`
+            : 'Última actualización: En directo'
+        }
         activeSensor={true}
         onClose={handleCloseSidebar}
       />
