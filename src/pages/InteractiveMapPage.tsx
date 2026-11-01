@@ -44,18 +44,16 @@ export const InteractiveMapPage: React.FC<InteractiveMapPageProps> = ({
       {/* Panel derecho de los detalles de l aplaya y su biodiversidad */}
       <DetailsSidebar
         isOpen={isSidebarOpen}
-        beachName={selectedBeach?.nom || ''}
-        location={`${selectedBeach?.municipi?.toUpperCase() || ''} • ${selectedBeach?.costa?.toUpperCase() || ''}`}
-        flagStatus={selectedBeach?.banderaStatus || 'green'}
-        flagLabel={selectedBeach?.banderaLabel || 'Bandera Verde'}
-        lastUpdated={
-          selectedBeach?.lastUpdated 
-            ? `Última actualización: ${selectedBeach.lastUpdated}`
-            : 'Última actualización: En directo'
-        }
-        activeSensor={true}
+        beachName={selectedBeach?.nom}
+        location={`${selectedBeach?.municipi} • ${selectedBeach?.costa}`}
+        latitud={selectedBeach?.latitud}
+        longitud={selectedBeach?.longitud}
+        flagStatus={selectedBeach?.banderaStatus}
+        flagLabel={selectedBeach?.banderaLabel}
+        lastUpdated={selectedBeach?.lastUpdated}
         onClose={handleCloseSidebar}
       />
+
     </div>
   );
 };

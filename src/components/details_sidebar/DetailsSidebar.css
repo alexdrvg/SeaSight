@@ -482,20 +482,6 @@
   transform: scale(1.05);
 }
 
-.seasight-species-card__media-badge {
-  position: absolute;
-  bottom: 0.35rem;
-  left: 0.35rem;
-  background-color: rgba(11, 37, 69, 0.85);
-  backdrop-filter: blur(4px);
-  color: var(--color-surface-white);
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  padding: 0.15rem 0.4rem;
-  border-radius: 4px;
-}
-
 /* Contenido a la derecha de la imagen */
 .seasight-species-card__content {
   flex: 1;
@@ -536,16 +522,18 @@
   flex-shrink: 0;
 }
 
-.seasight-species-card__badge--vulnerable {
-  background-color: var(--color-badge-vulnerable-bg);
-  color: var(--color-badge-vulnerable-text);
-  border: 1px solid #fef08a;
+/* Badge de Fauna (Azul Océano) */
+.seasight-species-card__badge--fauna {
+  background-color: var(--color-accent-ocean-light);
+  color: var(--color-accent-ocean);
+  border: 1px solid rgba(0, 150, 199, 0.2);
 }
 
-.seasight-species-card__badge--danger {
-  background-color: var(--color-badge-danger-bg);
-  color: var(--color-badge-danger-text);
-  border: 1px solid #fecaca;
+/* Badge de Flora (Verde Soft) */
+.seasight-species-card__badge--flora {
+  background-color: var(--color-notice-green-bg);
+  color: #047857; /* Verde texto legible */
+  border: 1px solid var(--color-notice-green-border);
 }
 
 .seasight-species-card__desc {
@@ -553,35 +541,12 @@
   font-size: 0.77rem;
   line-height: 1.45;
   color: #475569;
-}
-
-/* Fila inferior de Metadatos */
-.seasight-species-card__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding-top: 0.65rem;
-  border-top: 1px solid var(--color-border-subtle);
-  font-size: 0.74rem;
-  color: var(--color-text-muted);
-}
-
-.seasight-species-card__meta-left {
-  font-weight: 500;
-}
-
-.seasight-species-card__meta-right {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-weight: 600;
-  color: var(--color-primary-navy-hover);
-}
-
-.seasight-species-card__icon {
-  width: 14px;
-  height: 14px;
+  /* Limita el texto a máximo 2 o 3 líneas con puntos suspensivos (...) */
+  display: -webkit-box;
+  -webkit-line-clamp: 2; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Estado Vacío */
@@ -602,68 +567,6 @@
   color: var(--color-primary-navy);
 }
 
-/* ==========================================================================
-   8. Barra Inferior Fija
-   ========================================================================== */
-.seasight-drawer__footer {
-  padding: 1rem 1.6rem;
-  background-color: var(--color-surface-white);
-  border-top: 1px solid var(--color-border-subtle);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-  box-sizing: border-box;
-}
-
-.seasight-drawer__sensor-status {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.seasight-drawer__sensor-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: #cbd5e1;
-}
-
-.seasight-drawer__sensor-dot--active {
-  background-color: var(--color-success-sea);
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
-  animation: sensor-pulse 2s infinite;
-}
-
-@keyframes sensor-pulse {
-  0% { transform: scale(0.95); opacity: 0.8; }
-  50% { transform: scale(1.25); opacity: 1; }
-  100% { transform: scale(0.95); opacity: 0.8; }
-}
-
-.seasight-drawer__sensor-text {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--color-primary-navy);
-}
-
-.seasight-drawer__btn-close-action {
-  padding: 0.45rem 1rem;
-  background-color: var(--color-surface-white);
-  border: 1px solid var(--color-border-subtle);
-  border-radius: 8px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--color-primary-navy);
-  cursor: pointer;
-  transition: var(--transition-smooth);
-}
-
-.seasight-drawer__btn-close-action:hover {
-  background-color: var(--color-surface-soft);
-  border-color: #cbd5e1;
-  transform: translateY(-1px);
-}
 
 /* ==========================================================================
    9. Responsivo (Móvil / Pantallas estrechas)

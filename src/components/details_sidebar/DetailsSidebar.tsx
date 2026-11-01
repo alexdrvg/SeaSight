@@ -1,32 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './DetailsSidebar.css';
+import { fetchBiodiversityByCoords, type EspecieBiodiversidad } from '../../services/Biodiversity';
 
 export type TabType = 'fauna-flora' | 'alertas' | 'estado';
 export type FilterType = 'todos' | 'fauna' | 'flora' | 'protegidas';
-
-export interface BiodiversityCardItem {
-  id: string;
-  title: string;
-  scientificName: string;
-  description: string;
-  category: 'fauna' | 'flora';
-  isProtected?: boolean;
-  statusBadge: {
-    label: string;
-    variant: 'vulnerable' | 'danger' | 'warning' | 'info';
-  };
-  imageSrc: string;
-  metaInfo?: {
-    leftText: string;
-    rightText: string;
-    rightIcon?: 'anchor' | 'first-aid' | 'phone';
-  };
-}
 
 export interface DetailsSidebarProps {
   isOpen?: boolean;
   beachName?: string;
   location?: string;
+  latitud?: number;
+  longitud?: number;
   flagStatus?: 'green' | 'yellow' | 'red';
   flagLabel?: string;
   lastUpdated?: string;
@@ -36,7 +20,6 @@ export interface DetailsSidebarProps {
     description: string;
     tagLabel?: string;
   };
-  speciesList?: BiodiversityCardItem[];
   onClose?: () => void;
   onShare?: () => void;
   onBookmark?: () => void;
@@ -46,11 +29,12 @@ export const DetailsSidebar: React.FC<DetailsSidebarProps> = ({
   isOpen = false,
   beachName = '',
   location = '',
+  latitud,
+  longitud,
   flagStatus = 'green',
   flagLabel = '',
   lastUpdated = '',
   environmentalNotice,
-  speciesList = [],
   onClose,
   onShare,
   onBookmark,
@@ -59,6 +43,24 @@ export const DetailsSidebar: React.FC<DetailsSidebarProps> = ({
   const [selectedFilter, setSelectedFilter] = useState<FilterType>('todos');
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
 
+  // Estados dinámicos para la biodiversidad
+  const [speciesList, setSpeciesList] = useState<EspecieBiodiversidad[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  // Consulta automática a GBIF al cambiar las coordenadas de la playa
+  useEffect(() => {
+    if (!isOpen || latitud === undefined || longitud === undefined) return;
+
+    const loadBiodiversity = async () => {
+      setLoading(true);
+      const data = await fetchBiodiversityByCoords(latitud, longitud);
+      setSpeciesList(data);
+      setLoading(false);
+    };
+
+    loadBiodiversity();
+  }, [isOpen, latitud, longitud]);
+
   if (!isOpen) return null;
 
   const handleBookmarkToggle = () => {
@@ -66,17 +68,16 @@ export const DetailsSidebar: React.FC<DetailsSidebarProps> = ({
     if (onBookmark) onBookmark();
   };
 
-  // Filtrado reactivo de tarjetas de especies
+  // Filtrado de la lista devuelta por la API
   const filteredSpecies = speciesList.filter((item) => {
-    if (selectedFilter === 'fauna') return item.category === 'fauna';
-    if (selectedFilter === 'flora') return item.category === 'flora';
-    if (selectedFilter === 'protegidas') return item.isProtected;
+    if (selectedFilter === 'fauna') return item.categoria === 'fauna';
+    if (selectedFilter === 'flora') return item.categoria === 'flora';
+    if (selectedFilter === 'protegidas') return item.badgeText === 'Protegida';
     return true;
   });
 
   return (
     <div className="seasight-drawer-overlay" onClick={onClose}>
-      {/* onClick={(e) => e.stopPropagation()} evita que los clics dentro del panel lo cierren */}
       <aside 
         className="seasight-drawer" 
         role="complementary" 
@@ -177,7 +178,7 @@ export const DetailsSidebar: React.FC<DetailsSidebarProps> = ({
                 <path d="M2 12h20" />
               </svg>
               <span>Fauna y Flora</span>
-              <span className="seasight-drawer__tab-count">{speciesList.length}</span>
+              <span className="seasight-drawer__tab-count">{loading ? '...' : speciesList.length}</span>
             </button>
 
             <button
@@ -206,11 +207,10 @@ export const DetailsSidebar: React.FC<DetailsSidebarProps> = ({
           </nav>
         </header>
 
-        {/* Contenido de las pestañas con scroll */}
+        {/* Contenido con Scroll */}
         <div className="seasight-drawer__body">
           {activeTab === 'fauna-flora' ? (
             <>
-              {/* Cabecera de Sección */}
               <div className="seasight-drawer__section-head">
                 <div className="seasight-drawer__section-brand">
                   <svg className="seasight-drawer__icon-eco" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -224,7 +224,6 @@ export const DetailsSidebar: React.FC<DetailsSidebarProps> = ({
                 )}
               </div>
 
-              {/* Banner Aviso Ambiental */}
               {environmentalNotice && (
                 <div className="seasight-drawer__notice">
                   <div className="seasight-drawer__notice-icon">
@@ -239,19 +238,13 @@ export const DetailsSidebar: React.FC<DetailsSidebarProps> = ({
                 </div>
               )}
 
-              {/* Filtros */}
+              {/* Píldoras de Filtro */}
               <div className="seasight-drawer__filters" role="group" aria-label="Filtrar especies">
                 <button
                   type="button"
                   className={`seasight-drawer__pill ${selectedFilter === 'todos' ? 'seasight-drawer__pill--active' : ''}`}
                   onClick={() => setSelectedFilter('todos')}
                 >
-                  <svg className="seasight-drawer__pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="3" width="7" height="7" />
-                    <rect x="14" y="3" width="7" height="7" />
-                    <rect x="14" y="14" width="7" height="7" />
-                    <rect x="3" y="14" width="7" height="7" />
-                  </svg>
                   <span>Todos</span>
                 </button>
 
@@ -260,9 +253,6 @@ export const DetailsSidebar: React.FC<DetailsSidebarProps> = ({
                   className={`seasight-drawer__pill ${selectedFilter === 'fauna' ? 'seasight-drawer__pill--active' : ''}`}
                   onClick={() => setSelectedFilter('fauna')}
                 >
-                  <svg className="seasight-drawer__pill-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 8.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zm-4.5 1A2.5 2.5 0 1 0 7.5 4.5 2.5 2.5 0 0 0 7.5 9.5zm9 0a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zm-4.5 4a6.5 6.5 0 0 0-6.5 6.5 1 1 0 0 0 1 1h11a1 1 0 0 0 1-1 6.5 6.5 0 0 0-6.5-6.5z" />
-                  </svg>
                   <span>Fauna</span>
                 </button>
 
@@ -271,9 +261,6 @@ export const DetailsSidebar: React.FC<DetailsSidebarProps> = ({
                   className={`seasight-drawer__pill ${selectedFilter === 'flora' ? 'seasight-drawer__pill--active' : ''}`}
                   onClick={() => setSelectedFilter('flora')}
                 >
-                  <svg className="seasight-drawer__pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 2L15 8L21 9L17 14L18 20L12 17L6 20L7 14L3 9L9 8L12 2Z" />
-                  </svg>
                   <span>Flora</span>
                 </button>
 
@@ -282,92 +269,64 @@ export const DetailsSidebar: React.FC<DetailsSidebarProps> = ({
                   className={`seasight-drawer__pill ${selectedFilter === 'protegidas' ? 'seasight-drawer__pill--active' : ''}`}
                   onClick={() => setSelectedFilter('protegidas')}
                 >
-                  <svg className="seasight-drawer__pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                  </svg>
                   <span>Especies Protegidas</span>
                 </button>
               </div>
 
-              {/* Lista de tarjetas de especies */}
-              <div className="seasight-drawer__species-list">
-                {filteredSpecies.map((species) => (
-                  <article key={species.id} className="seasight-species-card">
-                    <div className="seasight-species-card__body">
-                      <div className="seasight-species-card__media">
-                        {species.imageSrc && (
-                          <img
-                            src={species.imageSrc}
-                            alt={species.title}
-                            className="seasight-species-card__img"
-                            loading="lazy"
-                          />
-                        )}
-                        <span className="seasight-species-card__media-badge">
-                          {species.category?.toUpperCase()}
-                        </span>
-                      </div>
+              {/* Indicador de carga */}
+              {loading && (
+                <div className="seasight-drawer__empty">
+                  <p>Buscando especies en el radio de esta playa...</p>
+                </div>
+              )}
 
-                      <div className="seasight-species-card__content">
-                        <div className="seasight-species-card__head">
-                          <div>
-                            <h5 className="seasight-species-card__title">{species.title}</h5>
-                            <span className="seasight-species-card__scientific">
-                              {species.scientificName}
-                            </span>
-                          </div>
-                          {species.statusBadge && (
-                            <span
-                              className={`seasight-species-card__badge seasight-species-card__badge--${species.statusBadge.variant}`}
-                            >
-                              {species.statusBadge.label}
-                            </span>
-                          )}
+              {/* Renderizado dinámico de tarjetas de GBIF */}
+              {!loading && filteredSpecies.length > 0 && (
+                <div className="seasight-drawer__species-list">
+                  {filteredSpecies.map((especie) => (
+                    <div key={especie.id} className="seasight-species-card">
+                      <div className="seasight-species-card__body">
+                        <div className="seasight-species-card__media">
+                          <img 
+                            src={especie.imagenUrl} 
+                            alt={especie.nombreComun} 
+                            className="seasight-species-card__img" 
+                          />
+                  
                         </div>
 
-                        <p className="seasight-species-card__desc">{species.description}</p>
+                        <div className="seasight-species-card__content">
+                          <div className="seasight-species-card__head">
+                            <div>
+                              <h4 className="seasight-species-card__title">
+                                {especie.nombreComun}
+                              </h4>
+                              <span className="seasight-species-card__scientific">
+                                {especie.nombreCientifico}
+                              </span>
+                            </div>
+
+                            <span className={`seasight-species-card__badge seasight-species-card__badge--${especie.categoria}`}>
+                              {especie.badgeText}
+                            </span>
+                          </div>
+
+                          <p className="seasight-species-card__desc">
+                            {especie.descripcion}
+                          </p>
+                        </div>
                       </div>
                     </div>
+                  ))}
+                </div>
+              )}
 
-                    {species.metaInfo && (
-                      <footer className="seasight-species-card__footer">
-                        <span className="seasight-species-card__meta-left">
-                          {species.metaInfo.leftText}
-                        </span>
-                        <span className="seasight-species-card__meta-right">
-                          {species.metaInfo.rightIcon === 'anchor' && (
-                            <svg className="seasight-species-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <circle cx="12" cy="5" r="3" />
-                              <line x1="12" y1="22" x2="12" y2="8" />
-                              <path d="M5 12H2a10 10 0 0 0 20 0h-3" />
-                            </svg>
-                          )}
-                          {species.metaInfo.rightIcon === 'first-aid' && (
-                            <svg className="seasight-species-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-                              <path d="M16 7V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v3" />
-                              <line x1="12" y1="11" x2="12" y2="17" />
-                              <line x1="9" y1="14" x2="15" y2="14" />
-                            </svg>
-                          )}
-                          {species.metaInfo.rightIcon === 'phone' && (
-                            <svg className="seasight-species-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                            </svg>
-                          )}
-                          <span>{species.metaInfo.rightText}</span>
-                        </span>
-                      </footer>
-                    )}
-                  </article>
-                ))}
-
-                {filteredSpecies.length === 0 && (
-                  <div className="seasight-drawer__empty">
-                    <p>No se encontraron especies para esta selección.</p>
-                  </div>
-                )}
-              </div>
+              {/* Sin resultados */}
+              {!loading && filteredSpecies.length === 0 && (
+                <div className="seasight-drawer__empty">
+                  <p>No se encontraron especies observadas para esta selección.</p>
+                </div>
+              )}
             </>
           ) : activeTab === 'alertas' ? (
             <div className="seasight-drawer__tab-placeholder">
