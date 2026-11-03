@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './DetailsSidebar.css';
 import { fetchBiodiversityByCoords, type EspecieBiodiversidad } from '../../services/Biodiversity';
+import { type MarineData, fetchMarineData } from '../../services/OpenMeteoMarineAPI';
+import { BeachStatusTab } from "../beach_info/BeachInfo";
 
 export type TabType = 'fauna-flora' | 'alertas' | 'estado';
 export type FilterType = 'todos' | 'fauna' | 'flora' | 'protegidas';
@@ -42,6 +44,21 @@ export const DetailsSidebar: React.FC<DetailsSidebarProps> = ({
   const [activeTab, setActiveTab] = useState<TabType>('fauna-flora');
   const [selectedFilter, setSelectedFilter] = useState<FilterType>('todos');
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
+  const [marineMetrics, setMarineMetrics] = useState<MarineData | null>(null);
+  const [metricsLoading, setMetricsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!isOpen || latitud === undefined || longitud === undefined) return;
+
+    const loadData = async () => {
+      setMetricsLoading(true);
+      const data = await fetchMarineData(latitud, longitud);
+      setMarineMetrics(data);
+      setMetricsLoading(false);
+    };
+
+    loadData();
+  }, [isOpen, latitud, longitud]);
 
   // Estados dinámicos para la biodiversidad
   const [speciesList, setSpeciesList] = useState<EspecieBiodiversidad[]>([]);
@@ -336,12 +353,7 @@ export const DetailsSidebar: React.FC<DetailsSidebarProps> = ({
               </div>
             </div>
           ) : (
-            <div className="seasight-drawer__tab-placeholder">
-              <h4 className="seasight-drawer__placeholder-title">Estado Actual de la Playa</h4>
-              <div className="seasight-drawer__empty">
-                <p>Cargando datos meteorológicos y de oleaje...</p>
-              </div>
-            </div>
+            <BeachStatusTab data={marineMetrics} loading={metricsLoading} />
           )}
         </div>
       </aside>
