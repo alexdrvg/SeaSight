@@ -1,4 +1,4 @@
-/* Overlay con fondo con desenfoque de cristal */
+/* Overlay con fondo sólido oscurecido sin blur */
 .seasight-modal-overlay {
   position: fixed;
   inset: 0;
@@ -7,9 +7,8 @@
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  background-color: rgba(11, 37, 69, 0.42);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background-color: rgba(11, 37, 69, 0.65); /* Aumentamos ligeramente la opacidad para suplir el desenfoque */
+  will-change: opacity;
   animation: seasightFadeIn 0.25s ease-out;
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -384,6 +383,19 @@
 .seasight-switch-mode-btn:hover {
   color: var(--color-primary-navy-hover);
   text-decoration: underline;
+}
+
+.seasight-google-slot {
+  display: flex;
+  justify-content: center;
+  min-height: 44px;
+  width: 100%;
+}
+
+.seasight-form-error {
+  color: #dc2626;
+  font-size: 0.85rem;
+  margin: 0.25rem 0 0.5rem;
 }
 
 @media (max-width: 480px) {

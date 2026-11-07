@@ -41,11 +41,11 @@ export const InteractiveMapPage: React.FC<InteractiveMapPageProps> = ({
         onReportIncident={onReportIncident}
       />
 
-      {/* Panel derecho de los detalles de l aplaya y su biodiversidad */}
+      {/* Panel derecho de los detalles de la playa y su biodiversidad */}
       <DetailsSidebar
         isOpen={isSidebarOpen}
         beachName={selectedBeach?.nom}
-        location={`${selectedBeach?.municipi} • ${selectedBeach?.costa}`}
+        location={`${selectedBeach?.municipi.toUpperCase()} • ${selectedBeach?.costa}`}
         latitud={selectedBeach?.latitud}
         longitud={selectedBeach?.longitud}
         flagStatus={selectedBeach?.banderaStatus}
