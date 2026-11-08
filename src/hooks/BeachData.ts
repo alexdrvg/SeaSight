@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { fetchAllPlayasCat, type Playa } from '../services/PlatgesCatalunya';
 import { fetchMarineData, type MarineData } from '../services/OpenMeteoMarineAPI';
+import { setCoastPoints } from '../services/coastGeometry';
 
 export function BeachData(centerLat: number, centerLng: number) {
   const [playas, setPlayas] = useState<Playa[]>([]);
@@ -12,6 +13,15 @@ export function BeachData(centerLat: number, centerLng: number) {
       setLoadingPlayas(true);
       const dataApi = await fetchAllPlayasCat();
       setPlayas(dataApi);
+
+      // Luego de leer las playas, ponemos y adaptamos las coordenadas de la lista a { lat, lng } para coastGeometry 
+      setCoastPoints(
+        dataApi.map((p) => ({
+          lat: p.latitud ?? p.latitud,
+          lng: p.longitud ?? p.longitud,
+        }))
+      );
+
       setLoadingPlayas(false);
     };
 

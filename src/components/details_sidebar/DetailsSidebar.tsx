@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './DetailsSidebar.css';
-import { fetchBiodiversityByCoords, type EspecieBiodiversidad } from '../../services/Biodiversity';
 import { type MarineData, fetchMarineData } from '../../services/OpenMeteoMarineAPI';
-import { BeachStatusTab } from "../beach_info/BeachInfo";
+import { BeachStatusTab } from '../beach_info/BeachInfo';
+import { useBiodiversity } from '../../hooks/useBiodiversity';
+import { Pagination } from './Pagination';
 
 export type TabType = 'fauna-flora' | 'alertas' | 'estado';
 export type FilterType = 'todos' | 'fauna' | 'flora' | 'protegidas';
+
+const NOMBRE_FUENTE = { minka: 'MINKA', inaturalist: 'iNaturalist', gbif: 'GBIF' } as const;
 
 export interface DetailsSidebarProps {
   isOpen?: boolean;
@@ -60,23 +63,28 @@ export const DetailsSidebar: React.FC<DetailsSidebarProps> = ({
     loadData();
   }, [isOpen, latitud, longitud]);
 
-  // Estados dinámicos para la biodiversidad
-  const [speciesList, setSpeciesList] = useState<EspecieBiodiversidad[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  // "Castelldefels • Barcelonès" -> "Castelldefels"
+  const municipio = location.split(/[•,·|]/)[0].trim();
 
-  // Consulta automática a GBIF al cambiar las coordenadas de la playa
-  useEffect(() => {
-    if (!isOpen || latitud === undefined || longitud === undefined) return;
+  // La página se reinicia sola al cambiar de playa o de filtro
+  const [pageState, setPageState] = useState({ scope: '', page: 0 });
+  const scope = `${beachName}|${selectedFilter}`;
+  const pageIndex = pageState.scope === scope ? pageState.page : 0;
 
-    const loadBiodiversity = async () => {
-      setLoading(true);
-      const data = await fetchBiodiversityByCoords(latitud, longitud);
-      setSpeciesList(data);
-      setLoading(false);
-    };
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const goToPage = (p: number) => {
+    setPageState({ scope, page: p });
+    bodyRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
-    loadBiodiversity();
-  }, [isOpen, latitud, longitud]);
+  const { items, page, totalPages, totalSpecies, loading } = useBiodiversity(
+    isOpen,
+    latitud,
+    longitud,
+    municipio,
+    selectedFilter,
+    pageIndex
+  );
 
   if (!isOpen) return null;
 
@@ -85,19 +93,11 @@ export const DetailsSidebar: React.FC<DetailsSidebarProps> = ({
     if (onBookmark) onBookmark();
   };
 
-  // Filtrado de la lista devuelta por la API
-  const filteredSpecies = speciesList.filter((item) => {
-    if (selectedFilter === 'fauna') return item.categoria === 'fauna';
-    if (selectedFilter === 'flora') return item.categoria === 'flora';
-    if (selectedFilter === 'protegidas') return item.badgeText === 'Protegida';
-    return true;
-  });
-
   return (
     <div className="seasight-drawer-overlay" onClick={onClose}>
-      <aside 
-        className="seasight-drawer" 
-        role="complementary" 
+      <aside
+        className="seasight-drawer"
+        role="complementary"
         aria-label={`Detalles de ${beachName}`}
         onClick={(e) => e.stopPropagation()}
       >
@@ -195,7 +195,7 @@ export const DetailsSidebar: React.FC<DetailsSidebarProps> = ({
                 <path d="M2 12h20" />
               </svg>
               <span>Fauna y Flora</span>
-              <span className="seasight-drawer__tab-count">{loading ? '...' : speciesList.length}</span>
+              <span className="seasight-drawer__tab-count">{loading ? '...' : totalSpecies}</span>
             </button>
 
             <button
@@ -225,7 +225,7 @@ export const DetailsSidebar: React.FC<DetailsSidebarProps> = ({
         </header>
 
         {/* Contenido con Scroll */}
-        <div className="seasight-drawer__body">
+        <div className="seasight-drawer__body" ref={bodyRef}>
           {activeTab === 'fauna-flora' ? (
             <>
               <div className="seasight-drawer__section-head">
@@ -297,49 +297,58 @@ export const DetailsSidebar: React.FC<DetailsSidebarProps> = ({
                 </div>
               )}
 
-              {/* Renderizado dinámico de tarjetas de GBIF */}
-              {!loading && filteredSpecies.length > 0 && (
-                <div className="seasight-drawer__species-list">
-                  {filteredSpecies.map((especie) => (
-                    <div key={especie.id} className="seasight-species-card">
-                      <div className="seasight-species-card__body">
-                        <div className="seasight-species-card__media">
-                          <img 
-                            src={especie.imagenUrl} 
-                            alt={especie.nombreComun} 
-                            className="seasight-species-card__img" 
-                          />
-                  
-                        </div>
+              {/* Tarjetas de la página actual + paginación */}
+              {!loading && items.length > 0 && (
+                <>
+                  <div className="seasight-drawer__species-list">
+                    {items.map((especie) => (
+                      <div key={especie.id} className="seasight-species-card">
+                        <div className="seasight-species-card__body">
+                          <div className="seasight-species-card__media">
+                            <img
+                              src={especie.imagenUrl}
+                              alt={especie.nombreComun}
+                              className="seasight-species-card__img"
+                              loading="lazy"
+                            />
+                            {especie.creditoImagen && especie.fuente && (
+                              <span className="seasight-species-card__credit">
+                                {especie.creditoImagen} · {NOMBRE_FUENTE[especie.fuente]}
+                              </span>
+                            )}
+                          </div>
 
-                        <div className="seasight-species-card__content">
-                          <div className="seasight-species-card__head">
-                            <div>
-                              <h4 className="seasight-species-card__title">
-                                {especie.nombreComun}
-                              </h4>
-                              <span className="seasight-species-card__scientific">
-                                {especie.nombreCientifico}
+                          <div className="seasight-species-card__content">
+                            <div className="seasight-species-card__head">
+                              <div>
+                                <h4 className="seasight-species-card__title">
+                                  {especie.nombreComun}
+                                </h4>
+                                <span className="seasight-species-card__scientific">
+                                  {especie.nombreCientifico}
+                                </span>
+                              </div>
+
+                              <span className={`seasight-species-card__badge seasight-species-card__badge--${especie.categoria}`}>
+                                {especie.badgeText}
                               </span>
                             </div>
 
-                            <span className={`seasight-species-card__badge seasight-species-card__badge--${especie.categoria}`}>
-                              {especie.badgeText}
-                            </span>
+                            <p className="seasight-species-card__desc">
+                              {especie.descripcion}
+                            </p>
                           </div>
-
-                          <p className="seasight-species-card__desc">
-                            {especie.descripcion}
-                          </p>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+
+                  <Pagination page={page} totalPages={totalPages} onChange={goToPage} />
+                </>
               )}
 
               {/* Sin resultados */}
-              {!loading && filteredSpecies.length === 0 && (
+              {!loading && items.length === 0 && (
                 <div className="seasight-drawer__empty">
                   <p>No se encontraron especies observadas para esta selección.</p>
                 </div>
