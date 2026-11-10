@@ -51,16 +51,24 @@ const LocateUserHandler = ({ targetCoords }: { targetCoords: [number, number] | 
 };
 
 const createBeachIcon = (status: 'green' | 'yellow' | 'red') => {
-  const colorMap = { green: '#10b981', yellow: '#eab308', red: '#ef4444' };
-  return L.divIcon({
-    className: 'custom-beach-pin',
-    html: `
-      <div style="background-color: white; border: 2px solid ${colorMap[status]}; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); font-size: 14px; cursor: pointer;">
-        🏖️
-      </div>
-    `,
-    iconSize: [28, 28],
-    iconAnchor: [14, 14],
+  // Mapa con las rutas a los PNGs guardados en public/icons/
+  const iconPaths = {
+    green: '/icons/marcador_playa_bandera_verde.png',
+    yellow: '/icons/marcador_playa_bandera_amarilla.png',
+    red: '/icons/marcador_playa_bandera_roja.png',
+  };
+
+  // Ancho y alto proporcionales reales del pin
+  const width = 30;
+  const height = 38;
+
+  return L.icon({
+    iconUrl: iconPaths[status] || iconPaths.green,
+    iconSize: [width, height],
+    // 📍 El punto exacto de la punta inferior del pin:
+    // Mitad del ancho (15) para centrarlo horizontalmente, y el ALTO TOTAL (38) para que la punta pise la arena.
+    iconAnchor: [width / 2, height],
+    popupAnchor: [0, -height],
   });
 };
 
