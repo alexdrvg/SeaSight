@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './MapView.css';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap, ZoomControl } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { BeachCard } from '../beach_card/BeachCard';
@@ -120,9 +120,13 @@ export const MapView: React.FC<MapViewProps> = ({ onReportIncident, onSelectBeac
           <MapContainer
             center={[CENTER_LAT, CENTER_LNG]}
             zoom={10}
+            zoomControl={false}
+            attributionControl={false}
             scrollWheelZoom={true}
             style={{ width: '100%', height: '100%', borderRadius: '24px' }}
           >
+            <ZoomControl position="topright"/>
+
             <FixMapResize />
             <LocateUserHandler targetCoords={userCoords} />
 
@@ -174,17 +178,14 @@ export const MapView: React.FC<MapViewProps> = ({ onReportIncident, onSelectBeac
                 onClick={handleGeolocateUser}
                 title="Ir a mi ubicación actual"
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="map-fab-btn__icon">
-                  <circle cx="12" cy="12" r="3" />
-                  <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
-                </svg>
+                <img src="/icons/buscar_tu_ubicacion.png" alt="Mi ubicación" className="map-fab-btn__icon" />
               </button>
 
               <button
                 type="button"
-                className="map-fab-btn map-fab-btn--report"
+                className="map-fab-report"
                 onClick={onReportIncident}
-                title="Reportar incidencia"
+                title="Reportar avistamiento"
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="map-fab-btn__icon">
                   <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
