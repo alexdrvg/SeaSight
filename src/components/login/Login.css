@@ -7,7 +7,7 @@
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
-  background-color: rgba(11, 37, 69, 0.65); /* Aumentamos ligeramente la opacidad para suplir el desenfoque */
+  background-color: rgba(11, 37, 69, 0.65);
   will-change: opacity;
   animation: seasightFadeIn 0.25s ease-out;
   box-sizing: border-box;
@@ -28,6 +28,9 @@
   position: relative;
   width: 100%;
   max-width: 440px;
+  max-height: 94vh;
+  overflow-y: auto;
+  scrollbar-width: none; /* Oculta barra de scroll en Firefox */
   background: rgba(255, 255, 255, 0.95);
   border-radius: 16px;
   border: 1px solid var(--color-border-subtle);
@@ -36,6 +39,11 @@
   box-sizing: border-box;
   color: var(--color-text-main);
   animation: seasightScaleIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Oculta barra de scroll en Chrome, Edge y Safari */
+.seasight-modal-card::-webkit-scrollbar {
+  display: none;
 }
 
 @keyframes seasightScaleIn {
@@ -130,34 +138,11 @@
   margin-bottom: 1.35rem;
 }
 
-.seasight-btn-google {
-  width: 100%;
+.seasight-google-slot {
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  background-color: var(--color-surface-white);
-  color: var(--color-primary-navy);
-  border: 1px solid var(--color-border-subtle);
-  border-radius: 10px;
-  font-size: 0.92rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition-smooth);
-  box-shadow: 0 2px 6px rgba(11, 37, 69, 0.04);
-  box-sizing: border-box;
-}
-
-.seasight-btn-google:hover {
-  background-color: var(--color-surface-soft);
-  border-color: #cbd5e1;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(11, 37, 69, 0.08);
-}
-
-.seasight-google-icon {
-  flex-shrink: 0;
+  min-height: 44px;
+  width: 100%;
 }
 
 /* Divisor */
@@ -206,19 +191,6 @@
   font-size: 0.82rem;
   font-weight: 600;
   color: var(--color-primary-navy);
-}
-
-.seasight-forgot-link {
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: var(--color-accent-ocean);
-  text-decoration: none;
-  transition: var(--transition-smooth);
-}
-
-.seasight-forgot-link:hover {
-  color: var(--color-primary-navy-hover);
-  text-decoration: underline;
 }
 
 .seasight-input-wrapper {
@@ -385,17 +357,47 @@
   text-decoration: underline;
 }
 
-.seasight-google-slot {
-  display: flex;
-  justify-content: center;
-  min-height: 44px;
-  width: 100%;
-}
-
 .seasight-form-error {
   color: #dc2626;
   font-size: 0.85rem;
   margin: 0.25rem 0 0.5rem;
+}
+
+/* Contenedor del login: sin padding para que el scroll llegue hasta el borde */
+.seasight-modal-card {
+  --seasight-modal-height: 700px;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 440px;
+  height: min(var(--seasight-modal-height), 94vh);
+  padding: 0; /* 👈 Elimina el hueco blanco a la derecha del scroll */
+  overflow: hidden;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: 0 20px 40px rgba(11, 37, 69, 0.22);
+  box-sizing: border-box;
+  color: var(--color-text-main);
+  transform: translateZ(0);
+  animation: seasightScaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Zona que hace scroll: pegada al borde derecho */
+.seasight-modal-scroll {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  will-change: scroll-position;
+  padding: 2.25rem 1.75rem 1.85rem 2rem;
+  box-sizing: border-box;
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(11, 37, 69, 0.25) transparent;
 }
 
 @media (max-width: 480px) {
@@ -403,11 +405,14 @@
     padding: 1rem;
   }
 
-  .seasight-modal-card {
+    .seasight-modal-card {
     width: 90%;
     max-width: 90%;
-    padding: 1.85rem 1.25rem 1.5rem 1.25rem;
     border-radius: 14px;
+  }
+
+  .seasight-modal-scroll {
+    padding: 1.85rem 1.25rem 1.5rem 1.25rem;
   }
 
   .seasight-modal-title {
